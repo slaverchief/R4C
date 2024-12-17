@@ -1,7 +1,9 @@
 from django.db.models import Count
 from django.http import HttpResponse
 from .models import *
-import pandas as pd
+from django.views import View
+from .validation import *
+import json
 from .services import *
 from io import BytesIO
 from django.utils import timezone
@@ -27,3 +29,14 @@ def export_excel(request):
     )
     response['Content-Disposition'] = 'attachment; filename="robots.xlsx"'
     return response
+
+
+class RobotView(View):
+
+    def post(self, request):
+        data = json.loads(request.body)
+        RobotCreateValidator(**data)
+        data['serial'] = f"{data['model']}-{data['version']}"
+        Robot.objects.create(**data)
+        return HttpResponse(content="success")
+

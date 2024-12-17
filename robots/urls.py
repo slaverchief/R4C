@@ -1,6 +1,8 @@
+
 from django.urls import path, include
 from .views import *
 
 urlpatterns = [
-    path("", export_excel)
+    path("table", export_excel),
+    path("", RobotView.as_view())
 ]
