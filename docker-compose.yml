@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  redis:
+    image: "redis:latest"
+
+  web:
+    env_file: "proj.env"
+    environment:
+      - REDIS_HOST=redis
+      - POSTGRES_HOST=pgdb
+    build: .
+    command: sh -c "celery -A R4C worker --loglevel=info & python manage.py makemigrations & python manage.py migrate & python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - pgdb
+
+  pgdb:
+    image: postgres
+    env_file: "proj.env"
+    container_name: pgdb
+
+

@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'customers',
     'orders',
-    'robots'
+    'robots',
+    'celery'
 ]
 
 MIDDLEWARE = [
@@ -84,10 +85,15 @@ WSGI_APPLICATION = 'R4C.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('POSTGRES_DB'),
+        'USER': env('POSTGRES_USER'),
+        'PASSWORD': env('POSTGRES_PASSWORD'),
+        'HOST': env('POSTGRES_HOST'),
+        'PORT': 5432
     }
 }
+
 
 
 # Password validation
@@ -127,3 +133,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+CELERY_BROKER_URL = f'redis://{env("REDIS_HOST")}:6379'
+
+CELERY_RESULT_BACKEND = f'redis://{env("REDIS_HOST")}:6379'
+
+CELERY_TIMEZONE = 'UTC'
